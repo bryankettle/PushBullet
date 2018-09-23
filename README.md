@@ -15,13 +15,13 @@ Copy the libraries folder to your Arduino folder
  **Notifications:**  
     PBnotify(String title, String body);
     
-        example:  
+	example:  
 		PBnotify("Write the title here","Write the body here");  
 
 PBnotify(String title, String body, String fileurl);
     
-        example:  
-	    	PBnotify("Write the title here","Write the body here","https://notarealwebsite.com/images/image.jpg"); 
+	example:  
+		PBnotify("Write the title here","Write the body here","https://notarealwebsite.com/images/image.jpg"); 
 		//only .jpg files are currently supported
 
 **Upload a File:**  
@@ -33,5 +33,5 @@ PBnotify(String title, String body, String fileurl);
 **Connect to pushbullet:**  
 	PBconnect();
 	
-        example:  
+	example:  
 		PBconnect();//connects to Pushbullet API. not required.

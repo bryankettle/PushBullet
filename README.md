@@ -28,7 +28,8 @@ PBnotify(String title, String body, String fileurl);
     PBupload(String filename);
         
 	example:  
-		String fileurl = PBupload("file.jpg"); //currently only jpeg is supported. The output is a HTTP address. the default file storage is SPIFFS. change this to SD if you are using a SD card
+		String fileurl = PBupload("file.jpg"); //currently only jpeg is supported. 
+		The output is a HTTP address. the default file storage is SPIFFS. change this to SD if you are using a SD card
 
 **Connect to pushbullet:**  
 	PBconnect();

@@ -6,21 +6,32 @@ Code tested on ESP8266
 Copy the libraries folder to your Arduino folder
 
 # COMMANDS CURRENTLY AVAILABLE:
- initialization:   
+ **initialization:**  
     PushbulletAPI(accesstoken);
-        example:  pb.PushbulletAPI(accesstoken);
+        
+	example:  
+		pb.PushbulletAPI(accesstoken);
 
- Notifications:
+ **Notifications:**  
     PBnotify(String title, String body);
-        example:  PBnotify("Write the title here","Write the body here");
+    
+        example:  
+		PBnotify("Write the title here","Write the body here");  
 
-    PBnotify(String title, String body, String fileurl);
-            example:  PBnotify("Write the title here","Write the body here","https://notarealwebsite.com/images/image.jpg"); //only .jpg files are currently supported
+PBnotify(String title, String body, String fileurl);
+    
+        example:  
+	    	PBnotify("Write the title here","Write the body here","https://notarealwebsite.com/images/image.jpg"); 
+		//only .jpg files are currently supported
 
-Upload a File:
+**Upload a File:**  
     PBupload(String filename);
-        example:  String fileurl = PBupload("file.jpg"); //currently only jpeg is supported. The output is a HTTP address. the default file storage is SPIFFS. change this to SD if you are using a SD card
+        
+	example:  
+		String fileurl = PBupload("file.jpg"); //currently only jpeg is supported. The output is a HTTP address. the default file storage is SPIFFS. change this to SD if you are using a SD card
 
-Connect to pushbullet:
-		PBconnect();
-        example:  PBconnect();//connects to Pushbullet API. not required.
+**Connect to pushbullet:**  
+	PBconnect();
+	
+        example:  
+		PBconnect();//connects to Pushbullet API. not required.

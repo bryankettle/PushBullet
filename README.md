@@ -1,4 +1,4 @@
-# PushbulletAPI-for-ESP8266
+# Pushbullet-for-ESP8266
 Created by: Alexander Bryan Sy 23/09/2018
 feel free to clone and distribute.
 Code tested on ESP8266

@@ -4,7 +4,7 @@ Last updated:	23/09/2018
 Used to send push notifications to PushBullet
 Feel free to edit
 */
-
+//#define DEBUG
 
 #include "Arduino.h"
 #include "PushbulletAPI.h"
@@ -39,7 +39,7 @@ void PushbulletAPI::PBconnect(){
   	}
 }
 
-void PushbulletAPI::PBnotify(String title, String body){// sends a push notification
+void PushbulletAPI::notify(String title, String body){// sends a push notification
 	PBconnect();
 	String url = "/v2/pushes";
 	String data = {"{\"body\":\"" + body + "\",\"title\":\"" + title + "\",\"type\":\"note\"}"};
@@ -53,7 +53,7 @@ void PushbulletAPI::PBnotify(String title, String body){// sends a push notifica
                  "Connection: close\r\n\r\n" + 
                  data
                  );
-                 
+        #ifdef DEBUG         
 	Serial.println("request sent");
     while (client.connected()) {
       String line = client.readStringUntil('\n');
@@ -62,8 +62,9 @@ void PushbulletAPI::PBnotify(String title, String body){// sends a push notifica
         break;
       }
 	}
+	#endif
 } 
-void PushbulletAPI::PBnotify(String title, String body,String fileurl){// Sends a notification with an image
+void PushbulletAPI::notify(String title, String body,String fileurl){// Sends a notification with an image
 	PBconnect();
 	String url = "/v2/pushes";
   	String data = {"{\"body\":\""+ body +"\",\"title\":\""+ title +"\",\"type\":\"file\",\"file_type\":\""+ filetype(fileurl) +"\",\"file_url\":\""+fileurl+"\",\"image_width\":322,\"image_height\":600}"};
@@ -77,7 +78,7 @@ void PushbulletAPI::PBnotify(String title, String body,String fileurl){// Sends 
               );
 
 
-
+	#ifdef DEBUG
   	Serial.println("request sent");
   	while (client.connected()) {
   	  String line = client.readStringUntil('\n');
@@ -86,11 +87,11 @@ void PushbulletAPI::PBnotify(String title, String body,String fileurl){// Sends 
   	    break;
    	 	}
 	}
-	/* //for debugging
 	String line = client.readString();
-    Serial.println(line);*/
+    	Serial.println(line);
+	#endif
 }
-String PushbulletAPI::PBupload(String filename){// uploads an image. the output will be the upload address
+String PushbulletAPI::upload(String filename){// uploads an image. the output will be the upload address
 	PBconnect();
 	String fileurl,uploadurl,uploadhost;
 	String url = "/v2/upload-request"; 
@@ -128,12 +129,12 @@ String PushbulletAPI::PBupload(String filename){// uploads an image. the output 
 
     pointer1 = upload.indexOf(".com/")+4;
     uploadurl = upload.substring(pointer1);    
-    /*
+    #ifdef DEBUG
     Serial.println("output: "+ line);
     Serial.println(fileurl);
     Serial.println(uploadhost);
-    Serial.println(uploadurl);*/
-    
+    Serial.println(uploadurl);
+    #endif
     PBconnect();
     SPIFFS.begin();//change this if your not using SPIFFS
     File imagefile = SPIFFS.open(("/" + filename), "r"); //change this to File imagefile = SD.open((filename), FILE_READ); if your not using SPIFFS
@@ -151,14 +152,14 @@ String PushbulletAPI::PBupload(String filename){// uploads an image. the output 
 
   	while(imagefile.available()){
     	while(imagefile.position() < imagefile.size()){
-      	String dataBuff = imagefile.readStringUntil('\n');
       	client.print(dataBuff);
       	client.print("\n");
     	}
-  	}
-  	client.print(F("\r\n--710ff0c6cf2d4c73b12db64cab12e58c--\r\n"));
-  	client.print("Connection: close\r\n\r\n");
-    Serial.println("request sent");
+  		}
+  		client.print(F("\r\n--710ff0c6cf2d4c73b12db64cab12e58c--\r\n"));
+  		client.print("Connection: close\r\n\r\n");
+	#ifdef DEBUG
+    	Serial.println("request sent");
 	while (client.connected()) {
       String line = client.readStringUntil('\n');
       if (line == "\r") {
@@ -166,10 +167,34 @@ String PushbulletAPI::PBupload(String filename){// uploads an image. the output 
         break;
       }
     }
+	#endif
 	return (fileurl);    
 	imagefile.close();
 }
 
+void PushbulletAPI::sms(String message, String phoneNumber){
+	PBconnect();
+	String url = "/v2/ephemerals";
+  	String data = {"{ \"push\": { \"conversation_iden\": \""+phoneNumber+"\",\"message\": \""+message+"\",\"package_name\": \"com.pushbullet.android\",\"source_user_iden\": \""+source_user+"\",\"target_device_iden\": \"phone\",\"type\": \"messaging_extension_reply\"},\"type\": \"push\"}"};
+  	client.print(String("POST ") + url + " HTTP/1.1\r\n" +
+               "Host: " + PBHOST + "\r\n" +
+               "User-Agent: ESP8266\r\n" +
+               "Access-Token: " + accesstoken + "\r\n" +
+               "Content-length:" + data.length() +"\r\n"
+               "Content-Type: application/json\r\n" +
+               "Connection: close\r\n\r\n" + data
+              );
+	#ifdef DEBUG
+  	Serial.println("request sent");
+  	while (client.connected()) {
+  	  String line = client.readStringUntil('\n');
+  	  if (line == "\r") {
+  	    Serial.println("headers received");
+  	    break;
+   	 	}
+	}
+	#endif
+}
 
 String filetype (String filename){ //put the filetypes here
 	if(filename.endsWith(".jpg")){
